@@ -23,9 +23,12 @@ func _init(cfg: CombatConfig = null) -> void:
 
 
 func get_fighter(id: int) -> CombatFighter:
-	if id < 0 or id >= fighters.size():
+	if id < 0:
 		return null
-	return fighters[id]
+	for f in fighters:
+		if f.id == id:
+			return f
+	return null
 
 
 # Distance entre deux corps, bord a bord. C'est toujours celle-ci qu'on veut,

@@ -17,6 +17,7 @@ var systems: Array = []
 func _init(config: CombatConfig = null) -> void:
 	state = CombatState.new(config)
 	systems = [
+		InitiativeSystem.new(),
 		TargetingSystem.new(),
 		ActionSystem.new(),
 		MovementSystem.new(),
@@ -45,6 +46,7 @@ func _spawn(cfg: CombatConfig, team: int, index: int) -> CombatFighter:
 	f.display_name = ("B" if team == 0 else "R") + str(index + 1)
 	f.max_hp = cfg.max_hp
 	f.hp = cfg.max_hp
+	f.initiative = cfg.initiative_blue if team == 0 else cfg.initiative_red
 
 	var x: float = 150.0 if team == 0 else cfg.arena_size.x - 150.0
 	var y: float = cfg.arena_size.y * (float(index) + 1.0) / (float(cfg.team_size) + 1.0)

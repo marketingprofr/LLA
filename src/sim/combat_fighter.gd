@@ -13,6 +13,7 @@ enum State { IDLE, WINDUP, RECOVERY }
 var id: int = 0
 var team: int = 0
 var display_name: String = ""
+var initiative: float = 0.0
 
 # --- Physique ---
 var pos: Vector2 = Vector2.ZERO

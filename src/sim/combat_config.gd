@@ -25,6 +25,10 @@ extends Resource
 @export var target_lock_ticks: int = 20       # duree minimale avant de pouvoir changer de cible
 @export var switch_margin: float = 0.75       # la nouvelle cible doit etre nettement plus proche
 
+# --- Initiative ---
+@export var initiative_blue: float = 1.0
+@export var initiative_red: float = 2.0
+
 # --- Attaque de base ---
 @export var max_hp: float = 100.0
 @export var attack_damage: float = 9.0
