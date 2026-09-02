@@ -8,16 +8,19 @@ extends RefCounted
 # =============================================================
 
 enum State { IDLE, WINDUP, RECOVERY }
+enum Order { HOLD, FRONTLINE, BACKLINE, FLANK, BREACH }
 
 # --- Identite ---
 var id: int = 0
 var team: int = 0
 var display_name: String = ""
 var initiative: float = 0.0
+var order: int = Order.BREACH
 
 # --- Physique ---
 var pos: Vector2 = Vector2.ZERO
 var vel: Vector2 = Vector2.ZERO
+var desired_vel: Vector2 = Vector2.ZERO
 
 # --- Vitalite ---
 var hp: float = 0.0

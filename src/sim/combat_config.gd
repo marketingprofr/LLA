@@ -29,6 +29,12 @@ extends Resource
 @export var initiative_blue: float = 1.0
 @export var initiative_red: float = 2.0
 
+# --- Ordres tactiques ---
+# 0=HOLD 1=FRONTLINE 2=BACKLINE 3=FLANK 4=BREACH
+@export var order_blue: int = 4
+@export var order_red: int = 4
+@export var backline_offset: float = 80.0       # distance min derriere la frontline
+
 # --- Attaque de base ---
 @export var max_hp: float = 100.0
 @export var attack_damage: float = 9.0
