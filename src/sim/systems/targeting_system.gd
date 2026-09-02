@@ -33,7 +33,7 @@ func _pick(state: CombatState, f: CombatFighter) -> void:
 	if current != null and f.target_lock > 0:
 		return
 
-	var candidate := state.nearest(f, state.enemies_of(f))
+	var candidate := _best_candidate(state, f)
 	if candidate == null:
 		return
 
@@ -46,6 +46,18 @@ func _pick(state: CombatState, f: CombatFighter) -> void:
 	var candidate_dist: float = f.pos.distance_to(candidate.pos)
 	if candidate_dist < current_dist * state.config.switch_margin:
 		_assign(state, f, candidate)
+
+
+func _best_candidate(state: CombatState, f: CombatFighter) -> CombatFighter:
+	var enemies := state.enemies_of(f)
+	if f.order == CombatFighter.Order.FLANK:
+		var holds: Array = []
+		for e in enemies:
+			if e.order == CombatFighter.Order.HOLD:
+				holds.append(e)
+		if not holds.is_empty():
+			return state.nearest(f, holds)
+	return state.nearest(f, enemies)
 
 
 func _assign(state: CombatState, f: CombatFighter, target: CombatFighter) -> void:
