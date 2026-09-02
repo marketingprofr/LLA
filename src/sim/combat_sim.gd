@@ -48,7 +48,8 @@ func _spawn(cfg: CombatConfig, team: int, index: int) -> CombatFighter:
 	f.max_hp = cfg.max_hp
 	f.hp = cfg.max_hp
 	f.initiative = cfg.initiative_blue if team == 0 else cfg.initiative_red
-	f.order = cfg.order_blue if team == 0 else cfg.order_red
+	var orders: Array = cfg.orders_blue if team == 0 else cfg.orders_red
+	f.order = orders[index % orders.size()]
 
 	var x: float = 150.0 if team == 0 else cfg.arena_size.x - 150.0
 	var y: float = cfg.arena_size.y * (float(index) + 1.0) / (float(cfg.team_size) + 1.0)
