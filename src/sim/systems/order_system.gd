@@ -10,7 +10,7 @@ extends SimSystem
 # HOLD      : ne bouge pas
 # FRONTLINE : avance vers l'ennemi le plus proche, tanke pour la backline
 # BACKLINE  : reste derriere les allies frontline
-# FLANK     : contourne le groupe ennemi pour atteindre sa cible de cote
+# FLANK     : fonce sur sa cible en deviant pour eviter les autres ennemis
 # BREACH    : tout droit vers sa cible assignee
 # =============================================================
 
@@ -95,17 +95,28 @@ func _flank(state: CombatState, f: CombatFighter) -> Vector2:
 	if state.gap(f, target) <= state.config.reach:
 		return Vector2.ZERO
 
-	var enemy_center := _centroid(state.enemies_of(f))
-	var to_center := enemy_center - f.pos
-	var cross := to_center.cross(target.pos - f.pos)
-	var direction := signf(cross) if absf(cross) > 0.1 else 1.0
+	var to_target := target.pos - f.pos
+	var dist := to_target.length()
+	if dist < 0.001:
+		return Vector2.ZERO
 
-	var orbit_vel := Steering.orbit(f.pos, enemy_center, state.config.speed, direction)
-	var seek_vel := Steering.seek(f.pos, target.pos, state.config.speed)
+	var max_angle := deg_to_rad(state.config.flank_max_angle_deg)
+	var angle := max_angle * clampf(dist / 300.0, 0.0, 1.0)
 
-	var gap_to_target := state.gap(f, target)
-	var orbit_weight := clampf(gap_to_target / 200.0, 0.0, 1.0)
-	return orbit_vel * orbit_weight + seek_vel * (1.0 - orbit_weight)
+	var direction := 1.0
+	var obstacle_sum := Vector2.ZERO
+	var obstacle_count := 0
+	for e in state.enemies_of(f):
+		if e.id != f.target_id:
+			obstacle_sum += e.pos
+			obstacle_count += 1
+	if obstacle_count > 0:
+		var obstacle_center := obstacle_sum / float(obstacle_count)
+		var cross := to_target.cross(obstacle_center - f.pos)
+		if absf(cross) > 0.1:
+			direction = -signf(cross)
+
+	return to_target.rotated(angle * direction).normalized() * state.config.speed
 
 
 func _centroid(fighters: Array) -> Vector2:

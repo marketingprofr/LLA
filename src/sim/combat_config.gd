@@ -34,6 +34,7 @@ extends Resource
 @export var orders_blue: Array = [0, 1, 2, 3, 4]
 @export var orders_red: Array = [0, 1, 2, 3, 4]
 @export var backline_offset: float = 80.0       # distance min derriere la frontline
+@export var flank_max_angle_deg: float = 20.0   # deviation max du flanker en degres
 
 # --- Attaque de base ---
 @export var max_hp: float = 100.0
