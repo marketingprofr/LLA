@@ -64,11 +64,59 @@ func _draw_alive(ci: CanvasItem, state: CombatState) -> void:
 		if not f.alive:
 			continue
 		var p: Vector2 = origin + f.pos
-		ci.draw_circle(p, state.config.radius, ArenaPalette.team(f.team))
+		var r := state.config.radius
+		_draw_shape(ci, p, r, f.order, ArenaPalette.team(f.team))
 		_draw_windup(ci, state, f, p)
 		if show_velocity and f.vel.length() > 1.0:
 			ci.draw_line(p, p + f.vel * 0.20, ArenaPalette.VELOCITY, 2.0)
 		_draw_hp_bar(ci, state, f, p)
+
+
+func _draw_shape(ci: CanvasItem, c: Vector2, r: float, order: int, col: Color) -> void:
+	match order:
+		CombatFighter.Order.HOLD:
+			_draw_diamond(ci, c, r, col)
+		CombatFighter.Order.FRONTLINE:
+			_draw_square(ci, c, r, col)
+		CombatFighter.Order.BACKLINE:
+			_draw_pentagon(ci, c, r, col)
+		CombatFighter.Order.FLANK:
+			ci.draw_circle(c, r, col)
+		CombatFighter.Order.BREACH:
+			_draw_triangle(ci, c, r, col)
+		_:
+			ci.draw_circle(c, r, col)
+
+
+func _draw_diamond(ci: CanvasItem, c: Vector2, r: float, col: Color) -> void:
+	ci.draw_colored_polygon(PackedVector2Array([
+		c + Vector2(0, -r), c + Vector2(r, 0),
+		c + Vector2(0, r), c + Vector2(-r, 0),
+	]), col)
+
+
+func _draw_square(ci: CanvasItem, c: Vector2, r: float, col: Color) -> void:
+	var s := r * 0.82
+	ci.draw_colored_polygon(PackedVector2Array([
+		c + Vector2(-s, -s), c + Vector2(s, -s),
+		c + Vector2(s, s), c + Vector2(-s, s),
+	]), col)
+
+
+func _draw_triangle(ci: CanvasItem, c: Vector2, r: float, col: Color) -> void:
+	ci.draw_colored_polygon(PackedVector2Array([
+		c + Vector2(0, -r),
+		c + Vector2(r * 0.866, r * 0.5),
+		c + Vector2(-r * 0.866, r * 0.5),
+	]), col)
+
+
+func _draw_pentagon(ci: CanvasItem, c: Vector2, r: float, col: Color) -> void:
+	var pts := PackedVector2Array()
+	for i in 5:
+		var angle := -PI / 2.0 + float(i) * TAU / 5.0
+		pts.append(c + Vector2(cos(angle), sin(angle)) * r)
+	ci.draw_colored_polygon(pts, col)
 
 
 # Un cercle blanc qui se referme sur le combattant pendant l'armement.
